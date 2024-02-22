@@ -14,8 +14,16 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 const traducaoClima = {
 
-    "few cloud": "Poucas nuvens",
+    "few clouds": "Poucas nuvens",
     "scattered clouds": "Nuvens dispersas",
+    "overcast clouds": "Nublado",
+    "broken clouds": "Sem nuvens",
+    "light rain": "Chuva leve",
+    "moderate rain": "Chuva moderada",
+    "clear sky": "Céu claro",
+    "light snow": "Pouca neve",
+    "haze": "Neblina",
+    
 
 }
 
@@ -28,17 +36,19 @@ app.get("/climatempo/:cidade", async (req, res) => {
 
     if(response.status === 200) {
 
-        const clima = traducaoClima[response.data.wether[0].description] 
-        || response.data.wether[0].description;
+        const clima = traducaoClima[response.data.weather[0].description] 
+        || response.data.weather[0].description;
 
         const weatherData = {
 
             Temperatura: response.data.main.temp,
             Umidade: response.data.main.humidity,
-            VelocidadeDoVento: response.data.main.speed,
+            VelocidadeDoVento: response.data.wind.speed,
             Clima: clima
 
         }
+
+        res.send(weatherData)
 
     } else {
 
@@ -49,7 +59,7 @@ app.get("/climatempo/:cidade", async (req, res) => {
     } catch (error) {
 
         res.status(500).send({erro: "Erro ao Obter Dados Meteorológicos", error});
-        
+
     }
 
 });
